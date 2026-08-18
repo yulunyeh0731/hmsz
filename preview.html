@@ -193,9 +193,9 @@ button{font-family:inherit}
 .pad-bar{display:flex;justify-content:space-between;align-items:center;padding:0 6px 8px}
 .pad-bar span{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:#6E6A61}
 .pad-bar button{border:0;background:transparent;font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--green);padding:4px 6px;cursor:pointer}
-.pad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:6px}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:stretch}
 .key-go{
-  grid-column:4;grid-row:1 / span 4;
+  grid-column:4;grid-row:1 / span 4;height:100%;align-self:stretch;
   background:var(--green);border-color:var(--green);color:var(--paper);
   font-size:15px;letter-spacing:.24em;writing-mode:vertical-rl;text-orientation:upright;
   box-shadow:0 1.5px 0 #1E3126;display:flex;align-items:center;justify-content:center
@@ -492,7 +492,6 @@ function openEntry(id){
   const e=byId(id);if(!e)return;
   const bg=document.createElement("div");
   bg.className="sheet-bg";bg.id="sheetbg";
-  bg.onclick=ev=>{if(ev.target===bg)closeSheet()};
   bg.innerHTML=`<div class="sheet-col"><div class="sheet">
     <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
     <h3>這 筆 明 細</h3>
@@ -562,10 +561,14 @@ function doDelete(id){
 }
 function closeSheet(){document.getElementById("sheetbg")?.remove()}
 function bindKeyboardScroll(bg){
-  bg.querySelectorAll("input").forEach(i=>i.addEventListener("focus",()=>{
-    if(padOpen)hidePad();
-    setTimeout(()=>i.scrollIntoView({block:"center",behavior:"smooth"}),260);
-  }));
+  // 版面必須固定：點文字欄位時不動自製鍵盤、也不捲動，
+  // 否則重排會讓點擊落到背景遮罩上，整張面板會被誤判關閉。
+  let downOnBg=false;
+  bg.addEventListener("pointerdown",e=>{downOnBg=(e.target===bg)},true);
+  bg.addEventListener("click",e=>{
+    if(downOnBg&&e.target===bg)closeSheet();
+    downOnBg=false;
+  });
 }
 
 /* ================= 動作 ================= */
@@ -651,7 +654,6 @@ function openAdd(opt){
   const names=people().map(p=>p.name);
   const bg=document.createElement("div");
   bg.className="sheet-bg";bg.id="sheetbg";
-  bg.onclick=e=>{if(e.target===bg)closeSheet()};
   bg.innerHTML=`<div class="sheet-col"><div class="sheet">
     <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
     <h3>${form.repay?(bal<0?"還 款 給 對 方":"收 到 還 款"):"記 一 筆"}</h3>
@@ -698,7 +700,6 @@ function toggleNewPerson(){
   const open=w.style.display!=="none";
   w.style.display=open?"none":"block";
   document.getElementById("newp-btn").textContent=open?"＋":"－";
-  if(!open){hidePad();setTimeout(()=>document.getElementById("f-person").focus(),60)}
 }
 function toggleFx(){
   const w=document.getElementById("fx-wrap");
@@ -707,9 +708,6 @@ function toggleFx(){
   if(open){
     document.getElementById("f-cur").value="";
     document.getElementById("f-orig").value="";
-  }else{
-    hidePad();
-    setTimeout(()=>document.getElementById("f-cur").focus(),60);
   }
   paintFx();
 }
