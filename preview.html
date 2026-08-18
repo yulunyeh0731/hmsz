@@ -44,8 +44,8 @@ button{font-family:inherit}
   max-width:420px;margin:0 auto;
 }
 .machine-top{display:flex;justify-content:space-between;align-items:center}
-.machine-top .brand{font-family:var(--mono);font-size:10.5px;letter-spacing:.34em;color:#8C877C}
-.machine-top .stat{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:#8C877C}
+.machine-top .brand{font-family:var(--mono);font-size:13px;letter-spacing:.34em;color:#CFCABE}
+.machine-top .stat{font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:#B3AEA2}
 .syncbadge{color:#C9A227;margin-right:10px}
 .slot{
   height:5px;background:var(--machine-dark);margin-top:10px;
@@ -58,10 +58,10 @@ button{font-family:inherit}
   background:var(--paper);border:.5px solid var(--edge);border-top:0;
   margin:0 16px;padding:13px 14px 10px;text-align:center;
 }
-.summary .lab{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--ink-3)}
-.summary .val{font-family:var(--mono);font-size:30px;color:var(--green);margin-top:4px;font-variant-numeric:tabular-nums}
+.summary .lab{font-family:var(--mono);font-size:13px;letter-spacing:.32em;color:#5E5A52}
+.summary .val{font-family:var(--mono);font-size:34px;color:var(--green);margin-top:4px;font-variant-numeric:tabular-nums}
 .summary .val.zero{color:var(--ink-3);font-size:22px}
-.summary .sub{font-size:12px;color:var(--ink-2);margin-top:4px}
+.summary .sub{font-size:13px;color:#5E5A52;margin-top:4px}
 .summary .sub b{font-weight:500;color:var(--red)}
 .summary-wrap{max-width:420px;margin:0 auto 18px}
 .tear{display:block;height:8px;width:calc(100% - 32px);margin:0 16px}
@@ -77,7 +77,7 @@ button{font-family:inherit}
 .stub-wrap.done{opacity:.6}
 .stub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .stub-name{font-family:var(--mono);font-size:19px;letter-spacing:.2em}
-.stub-meta{font-size:12px;color:var(--ink-3);margin-top:4px;letter-spacing:.06em}
+.stub-meta{font-size:12.5px;color:#7A7568;margin-top:4px;letter-spacing:.06em}
 .stub-amt{font-family:var(--mono);font-size:24px;color:var(--green);font-variant-numeric:tabular-nums;line-height:1.1}
 .stub-amt.owe{color:var(--red)}
 .stub-amt.zero{color:var(--ink-3);font-size:15px;letter-spacing:.14em}
@@ -149,7 +149,7 @@ button{font-family:inherit}
 
 /* ---------- 按鈕 ---------- */
 .acts{display:flex;gap:8px;margin:0 0 22px}
-.btn{flex:1;border:.5px solid var(--rule);background:var(--paper);color:var(--ink-2);font-family:var(--mono);font-size:14px;letter-spacing:.1em;padding:14px 8px;cursor:pointer}
+.btn{flex:1;border:.5px solid var(--rule);background:var(--paper);color:#4A463E;font-family:var(--mono);font-size:14px;letter-spacing:.1em;padding:14px 8px;cursor:pointer}
 .btn:active{background:#EDEAE4}
 .btn.primary{background:var(--green);border-color:var(--green);color:var(--paper)}
 .btn.danger{color:var(--red);border-color:#DCC4BF}
@@ -164,28 +164,68 @@ button{font-family:inherit}
 
 /* ---------- 面板 ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(42,39,33,.42);z-index:40;display:flex;align-items:flex-end;justify-content:center}
-.sheet{width:100%;max-width:420px;background:var(--paper);border-top:.5px solid var(--edge);padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:up .22s ease-out both}
+.sheet-col{display:flex;flex-direction:column;width:100%;max-width:420px;max-height:96dvh;max-height:96vh}
+.sheet{width:100%;background:var(--paper);border-top:.5px solid var(--edge);padding:16px 16px 18px;flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:up .22s ease-out both}
 @keyframes up{from{transform:translateY(18px);opacity:.4}to{transform:translateY(0);opacity:1}}
-.sheet h3{margin:0 0 14px;font-family:var(--mono);font-size:13.5px;letter-spacing:.28em;color:var(--ink-3);text-align:center;font-weight:400}
+.sheet h3{margin:0 0 16px;font-family:var(--mono);font-size:16px;letter-spacing:.28em;color:var(--ink);text-align:center;font-weight:400}
+.amt-disp{
+  text-align:center;font-family:var(--mono);font-size:40px;color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  padding:8px 0 12px;border-bottom:1px solid var(--rule);
+  white-space:nowrap;overflow:hidden;cursor:pointer;
+}
+.amt-disp.on{border-bottom-color:var(--green);border-bottom-width:2px}
+.amt-disp .caret{display:none}
+.amt-disp.on .caret{display:inline-block}
+.amt-disp .ph{color:#C4BFB3}
+.amt-disp .caret{
+  display:inline-block;width:2px;height:.82em;background:var(--green);
+  margin-left:3px;vertical-align:-.06em;animation:blink 1.05s step-end infinite
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.amt-cur{font-size:17px;color:var(--ink-3);margin-right:6px;letter-spacing:.1em}
+.pad-dock{
+  flex:0 0 auto;background:#E4E0D8;border-top:.5px solid var(--rule);
+  padding:9px 8px calc(9px + env(safe-area-inset-bottom));
+  animation:padUp .2s ease-out both
+}
+@keyframes padUp{from{transform:translateY(14px);opacity:.5}to{transform:translateY(0);opacity:1}}
+.pad-bar{display:flex;justify-content:space-between;align-items:center;padding:0 6px 8px}
+.pad-bar span{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:#6E6A61}
+.pad-bar button{border:0;background:transparent;font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--green);padding:4px 6px;cursor:pointer}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.key{
+  border:.5px solid var(--rule);background:var(--paper-hi);color:var(--ink);
+  font-family:var(--mono);font-size:22px;padding:13px 0;cursor:pointer;
+  box-shadow:0 1.5px 0 #CFC9BC;transition:transform .05s,box-shadow .05s
+}
+.key:active{transform:translateY(1.5px);box-shadow:0 0 0 #CFC9BC;background:#EDE9E1}
+.key-del{font-size:19px;color:var(--red)}
+.morebtn{
+  width:100%;border:0;background:transparent;color:#5E5A52;
+  font-family:var(--mono);font-size:13px;letter-spacing:.2em;padding:12px 0;cursor:pointer
+}
 .amt-input{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;font-family:var(--mono);font-size:38px;text-align:center;color:var(--ink);padding:4px 0 10px;font-variant-numeric:tabular-nums}
 .amt-input:focus{outline:none;border-bottom-color:var(--green)}
 .dir{display:flex;margin:14px 0 16px;border:.5px solid var(--rule)}
-.dir button{flex:1;border:0;background:transparent;padding:14px 4px;font-size:15px;color:var(--ink-2);cursor:pointer}
+.dir button{flex:1;border:0;background:transparent;padding:14px 4px;font-size:15px;color:#4A463E;cursor:pointer}
 .dir button.on{background:var(--green);color:var(--paper)}
 .fld{margin-bottom:13px}
-.fld label{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:var(--ink-3);margin-bottom:5px}
-.fld input{width:100%;border:.5px solid var(--rule);background:var(--paper-hi);padding:10px 11px;font-family:var(--mono);font-size:16px;color:var(--ink);border-radius:0}
+.fld label{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#5E5A52;margin-bottom:6px}
+.fld input{width:100%;min-width:0;max-width:100%;border:.5px solid var(--rule);background:var(--paper-hi);padding:10px 11px;font-family:var(--mono);font-size:16px;color:var(--ink);border-radius:0}
+.fld input[type=date]{font-size:14px;padding:10px 6px;text-align:center}
+.row2{align-items:end}
 .fld input:focus{outline:none;border-color:var(--green)}
 .row2{display:flex;gap:10px}
 .row2 .fld{flex:1;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:.5px solid var(--rule);background:var(--paper-hi);color:var(--ink-2);font-size:14.5px;padding:10px 14px;cursor:pointer;font-family:var(--mono)}
+.chip{border:.5px solid var(--rule);background:var(--paper-hi);color:#4A463E;font-size:14.5px;padding:10px 14px;cursor:pointer;font-family:var(--mono)}
 .chip.on{background:var(--green);border-color:var(--green);color:var(--paper)}
 .repay-note{text-align:center;font-size:14px;color:var(--ink-2);margin:14px 0 16px;line-height:1.7}
 .repay-note b{font-family:var(--mono);color:var(--ink);font-weight:400}
 .linkish{border:0;background:transparent;color:var(--green);font-size:14px;text-decoration:underline;padding:6px 4px;margin-top:2px;cursor:pointer}
 .err{color:var(--red);font-size:13.5px;margin-bottom:10px;text-align:center}
-.skiphint{font-size:12px;color:var(--ink-3);margin-top:6px}
+.skiphint{font-size:12.5px;color:#7A7568;margin-top:7px}
 .confirm{background:var(--paper-off);border:.5px solid var(--rule);padding:13px;margin-bottom:12px}
 .confirm p{margin:0 0 10px;font-size:14px;color:var(--ink);line-height:1.6}
 .toast{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:14px;padding:9px 16px;z-index:60;font-family:var(--mono);letter-spacing:.06em}
@@ -335,7 +375,7 @@ function home(){
   const live=ps.filter(p=>p.bal!==0), done=ps.filter(p=>p.bal===0);
 
   let h=`<div class="machine">
-    <div class="machine-top"><span class="brand">還 沒 算 帳</span><span class="stat"><span id="syncbadge" class="syncbadge"></span>${live.length} 人未結</span></div>
+    <div class="machine-top"><span class="brand">還 沒 算 帳</span><span class="stat"><span id="syncbadge" class="syncbadge"></span>${live.length?live.length+" 人未結":""}</span></div>
     <div class="slot"></div>
   </div>
   <div class="machine-foot"></div>
@@ -350,7 +390,7 @@ function home(){
   <div class="wrap">`;
 
   if(!ps.length){
-    h+=`<div class="empty">還 沒 有 任 何 帳</div></div>`;
+    h+=`<div class="empty">目 前 沒 有 帳</div></div>`;
     document.getElementById("app").innerHTML=h;return;
   }
 
@@ -436,10 +476,10 @@ function openEntry(id){
   const bg=document.createElement("div");
   bg.className="sheet-bg";bg.id="sheetbg";
   bg.onclick=ev=>{if(ev.target===bg)closeSheet()};
-  bg.innerHTML=`<div class="sheet">
+  bg.innerHTML=`<div class="sheet-col"><div class="sheet">
     <h3>這 筆 明 細</h3>
-    <div class="fld"><label>金 額</label><input id="e-amt" type="number" inputmode="decimal" value="${Math.abs(e.amount)}"></div>
-    <div class="dir">
+    <div class="amt-disp on" id="amt-disp" onclick="showPad()"></div>
+    <div class="dir" style="margin-top:14px">
       <button id="ed-lend" class="${e.amount>=0?"on":""}" onclick="setEDir('lend')">我先付</button>
       <button id="ed-borrow" class="${e.amount<0?"on":""}" onclick="setEDir('borrow')">對方先付</button>
     </div>
@@ -459,9 +499,11 @@ function openEntry(id){
       <button class="btn primary" onclick="saveEntry('${q(id)}')">儲 存</button>
     </div>
     <div id="del-zone"><button class="btn danger" style="width:100%" onclick="askDelete('${q(id)}')">刪 除 這 筆</button></div>
-  </div>`;
+  </div><div class="pad-dock" id="paddock"></div></div>`;
+  padRaw=String(Math.abs(e.amount));padOpen=true;
   document.body.appendChild(bg);
   bindKeyboardScroll(bg);
+  renderDock();paintPad();
   eform={dir:e.amount>=0?"lend":"borrow",pay:e.pay||""};
 }
 let eform={dir:"lend",pay:""};
@@ -473,7 +515,7 @@ function setEPay(b){eform.pay=eform.pay===b?"":b;
 
 function saveEntry(id){
   const e=byId(id);if(!e)return;
-  const amt=Number(document.getElementById("e-amt").value);
+  const amt=padValue();
   const err=document.getElementById("e-err");
   if(!amt||amt<=0){err.textContent="請輸入金額";err.style.display="block";return}
   const cur=(document.getElementById("e-cur").value.trim()||"TWD").toUpperCase();
@@ -506,6 +548,7 @@ function doDelete(id){
 function closeSheet(){document.getElementById("sheetbg")?.remove()}
 function bindKeyboardScroll(bg){
   bg.querySelectorAll("input").forEach(i=>i.addEventListener("focus",()=>{
+    if(padOpen)hidePad();
     setTimeout(()=>i.scrollIntoView({block:"center",behavior:"smooth"}),260);
   }));
 }
@@ -546,6 +589,41 @@ function toast(m){
   document.body.appendChild(d);setTimeout(()=>d.remove(),1900);
 }
 
+/* ================= 金額鍵盤 ================= */
+let padRaw="";
+function padPress(k){
+  if(k==="del")padRaw=padRaw.slice(0,-1);
+  else if(k==="00"){ if(padRaw&&padRaw.length<=7)padRaw+="00"; }
+  else if(padRaw.length<9)padRaw=(padRaw+k).replace(/^0+(?=\d)/,"");
+  paintPad();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function paintPad(){
+  const d=document.getElementById("amt-disp");if(!d)return;
+  d.innerHTML=(padRaw?Number(padRaw).toLocaleString("en-US"):'<span class="ph">0</span>')
+             +'<span class="caret"></span>';
+}
+function padValue(){return Number(padRaw)||0}
+let padOpen=false;
+function showPad(){
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  padOpen=true;renderDock();
+}
+function hidePad(){padOpen=false;renderDock()}
+function renderDock(){
+  const d=document.getElementById("paddock");if(!d)return;
+  d.innerHTML=padOpen?keypadHTML():"";
+  d.style.display=padOpen?"block":"none";
+  const disp=document.getElementById("amt-disp");
+  if(disp)disp.className="amt-disp"+(padOpen?" on":"");
+}
+function keypadHTML(){
+  const keys=["1","2","3","4","5","6","7","8","9","00","0","del"];
+  return '<div class="pad-bar"><span>金 額</span><button onclick="hidePad()">收 起</button></div>'
+    +'<div class="pad">'+keys.map(k=>
+    '<button class="key'+(k==="del"?" key-del":"")+'" onclick="padPress(\''+k+'\')">'
+    +(k==="del"?"&#9003;":k)+'</button>').join("")+'</div>';
+}
 /* ================= 新增 ================= */
 let form={dir:"lend",pay:"",repay:false,bal:0};
 function openAdd(opt){
@@ -557,12 +635,12 @@ function openAdd(opt){
   const bg=document.createElement("div");
   bg.className="sheet-bg";bg.id="sheetbg";
   bg.onclick=e=>{if(e.target===bg)closeSheet()};
-  bg.innerHTML=`<div class="sheet">
+  bg.innerHTML=`<div class="sheet-col"><div class="sheet">
     <h3>${form.repay?(bal<0?"還 款 給 對 方":"收 到 還 款"):"記 一 筆"}</h3>
-    <input class="amt-input" id="f-amt" type="number" inputmode="decimal" placeholder="0">
+    <div class="amt-disp on" id="amt-disp" onclick="showPad()"><span class="ph">0</span><span class="caret"></span></div>
     ${form.repay
       ? `<div class="repay-note">目前${bal<0?"你欠 "+esc(pre):esc(pre)+" 欠你"} <b>${money(bal)}</b>，這筆會直接扣掉<br><button class="linkish" onclick="fillAll(${Math.abs(bal)})">帶入全額</button></div>`
-      : `<div class="dir">
+      : `<div class="dir" style="margin:14px 0">
       <button id="d-lend" class="on" onclick="setDir('lend')">我先付</button>
       <button id="d-borrow" onclick="setDir('borrow')">對方先付</button>
     </div>`}
@@ -582,22 +660,25 @@ function openAdd(opt){
       <input id="f-cur" placeholder="THB" style="flex:0 0 90px">
       <input id="f-orig" type="number" inputmode="decimal" placeholder="原幣金額"></div></div>`}
     <div class="err" id="f-err" style="display:none"></div>
-    <div class="acts" style="margin-bottom:4px">
+    <div class="acts" style="margin-bottom:2px">
       <button class="btn" onclick="closeSheet()">取 消</button>
       <button class="btn primary" onclick="submitAdd()">${form.repay?"記 下 還 款":"列 印"}</button>
     </div>
-  </div>`;
+  </div><div class="pad-dock" id="paddock"></div></div>`;
+  padRaw="";padOpen=true;
   document.body.appendChild(bg);
   bindKeyboardScroll(bg);
-  setTimeout(()=>document.getElementById("f-amt").focus(),80);
+  renderDock();paintPad();
 }
-function fillAll(v){document.getElementById("f-amt").value=v;}
+function fillAll(v){padRaw=String(Math.round(v));paintPad();}
 function pickPerson(n){
   const inp=document.getElementById("f-person");
-  inp.value=inp.value===n?"":n;syncPerson();
+  if(inp)inp.value=inp.value===n?"":n;
+  syncPerson();
 }
 function syncPerson(){
-  const v=document.getElementById("f-person").value.trim();
+  const inp=document.getElementById("f-person");
+  const v=inp?inp.value.trim():"";
   document.querySelectorAll("#sheetbg .chip[data-p]").forEach(c=>c.className="chip"+(c.dataset.p===v?" on":""));
 }
 function setDir(d){form.dir=d;
@@ -606,8 +687,9 @@ function setDir(d){form.dir=d;
 function setPay(b){form.pay=form.pay===b?"":b;
   document.querySelectorAll("#sheetbg .chip[data-b]").forEach(c=>c.className="chip"+(c.dataset.b===form.pay?" on":""));}
 function submitAdd(){
-  const amt=Number(document.getElementById("f-amt").value);
-  const person=document.getElementById("f-person").value.trim();
+  const amt=padValue();
+  const pEl=document.getElementById("f-person");
+  const person=(pEl?pEl.value:"").trim();
   const item=document.getElementById("f-item").value.trim();
   const date=document.getElementById("f-date").value;
   const cur=(document.getElementById("f-cur").value.trim()||"TWD").toUpperCase();
