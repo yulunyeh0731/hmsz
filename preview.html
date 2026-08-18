@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>還沒算帳 · 預覽</title>
+<meta name="theme-color" content="#39352E">
+<meta name="apple-mobile-web-app-title" content="還沒算帳">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{
+  --paper:#F5F3F0;
+  --paper-hi:#FAF9F7;
+  --paper-off:#EEEBE6;
+  --bg:#E8E5E0;
+  --rule:#C9C4B9;
+  --edge:#DAD6CF;
+  --ink:#2A2721;
+  --ink-2:#6E6A61;
+  --ink-3:#A6A197;
+  --green:#2E4739;
+  --red:#B23A2E;
+  --machine:#39352E;
+  --machine-dark:#1C1A16;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;
+  font-size:15px;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(80px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:420px;margin:0 auto;padding:0 14px}
+button{font-family:inherit}
+
+/* ---------- 出單機 ---------- */
+.machine{
+  background:var(--machine);
+  padding:calc(12px + env(safe-area-inset-top)) 16px 0;
+  max-width:420px;margin:0 auto;
+}
+.machine-top{display:flex;justify-content:space-between;align-items:center}
+.machine-top .brand{font-family:var(--mono);font-size:9px;letter-spacing:.34em;color:#8C877C}
+.machine-top .stat{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:#8C877C}
+.syncbadge{color:#C9A227;margin-right:10px}
+.slot{
+  height:5px;background:var(--machine-dark);margin-top:10px;
+  box-shadow:inset 0 2px 3px rgba(0,0,0,.62);
+}
+.machine-foot{height:12px;background:var(--machine)}
+
+/* ---------- 總額紙條 ---------- */
+.summary{
+  background:var(--paper);border:.5px solid var(--edge);border-top:0;
+  margin:0 16px;padding:13px 14px 10px;text-align:center;
+}
+.summary .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.32em;color:var(--ink-3)}
+.summary .val{font-family:var(--mono);font-size:30px;color:var(--green);margin-top:4px;font-variant-numeric:tabular-nums}
+.summary .val.zero{color:var(--ink-3);font-size:20px}
+.summary .sub{font-size:10.5px;color:var(--ink-2);margin-top:4px}
+.summary .sub b{font-weight:500;color:var(--red)}
+.summary-wrap{max-width:420px;margin:0 auto 18px}
+.tear{display:block;height:8px;width:calc(100% - 32px);margin:0 16px}
+
+/* ---------- 票根 ---------- */
+.stub-wrap{margin-bottom:14px;filter:drop-shadow(0 1px 1px rgba(60,55,45,.10))}
+.stub{
+  background:var(--paper);border:.5px solid var(--edge);border-bottom:0;
+  padding:12px 14px 11px;cursor:pointer;transition:transform .12s ease
+}
+.stub:active{transform:scale(.988)}
+.stub-wrap.done .stub{background:var(--paper-off)}
+.stub-wrap.done{opacity:.6}
+.stub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.stub-name{font-family:var(--mono);font-size:17px;letter-spacing:.2em}
+.stub-meta{font-size:10.5px;color:var(--ink-3);margin-top:4px;letter-spacing:.06em}
+.stub-amt{font-family:var(--mono);font-size:22px;color:var(--green);font-variant-numeric:tabular-nums;line-height:1.1}
+.stub-amt.owe{color:var(--red)}
+.stub-amt.zero{color:var(--ink-3);font-size:14px;letter-spacing:.14em}
+.stub-last{border-top:1px dashed var(--rule);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.tear-s{display:block;width:100%;height:9px}
+
+/* ---------- 釘籤（已結清） ---------- */
+.spike{max-width:420px;margin:22px auto 12px;padding:0 14px;position:relative}
+.spike-rod{height:26px;display:flex;align-items:flex-end;justify-content:center}
+.spike-rod .pin{width:3px;height:22px;background:linear-gradient(to bottom,#9C968A,#5E5A52);border-radius:2px 2px 0 0}
+.spike-rod .base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:44px;height:5px;background:#6E6A61;border-radius:2px}
+.spike-lab{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--ink-3);margin-top:8px}
+.spike-wrap .stub{position:relative}
+.spike-wrap .stub::before{
+  content:"";position:absolute;left:50%;top:6px;transform:translateX(-50%);
+  width:8px;height:8px;border-radius:50%;background:var(--bg);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.25)
+}
+
+/* ---------- 明細票 ---------- */
+.receipt-wrap{margin-bottom:16px;filter:drop-shadow(0 1px 2px rgba(60,55,45,.12))}
+.receipt{background:var(--paper);border:.5px solid var(--edge);border-bottom:0;padding:16px 16px 12px;position:relative;overflow:hidden}
+.r-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--ink-3);text-align:center}
+.r-name{font-family:var(--mono);font-size:22px;letter-spacing:.24em;text-align:center;margin-top:6px}
+.r-no{font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:5px;letter-spacing:.08em;text-align:center}
+.rule{border-top:1px dashed var(--rule);margin:12px 0 6px}
+.line{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  padding:11px 4px;margin:0 -4px;font-family:var(--mono);font-size:12.5px;color:#4A4740;
+  cursor:pointer;transition:background .12s
+}
+.line:active{background:#EBE7E0}
+.line .l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.line .tag{color:var(--ink-3)}
+.line .r{font-variant-numeric:tabular-nums;flex-shrink:0}
+.line .r.minus{color:var(--red)}
+.line.settle,.line.settle .r{color:var(--green)}
+.total-line{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0 2px}
+.total-label{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-2)}
+.total-val{font-family:var(--mono);font-size:24px;color:var(--green);font-variant-numeric:tabular-nums}
+.total-val.owe{color:var(--red)}
+.total-val.zero{color:var(--ink-3);font-size:16px}
+.status{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--ink-3);margin-top:12px}
+.barcode{height:22px;margin-top:7px;display:flex;align-items:center;justify-content:center;gap:2px}
+.barcode i{display:block;background:var(--ink);height:18px}
+.stamp{
+  position:absolute;right:18px;bottom:52px;
+  border:2px solid var(--green);color:var(--green);
+  font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:4px 9px;
+  mix-blend-mode:multiply;transform:rotate(-9deg)
+}
+.stamp.drop{animation:stampIn .38s cubic-bezier(.2,1.5,.5,1) both}
+@keyframes stampIn{
+  0%{opacity:0;transform:rotate(-9deg) scale(2.1)}
+  70%{opacity:1;transform:rotate(-9deg) scale(.94)}
+  100%{opacity:1;transform:rotate(-9deg) scale(1)}
+}
+.line.fresh{animation:printIn .55s ease-out both}
+@keyframes printIn{
+  0%{opacity:0;transform:translateY(-16px);background:#EDE3C6}
+  60%{opacity:1;transform:translateY(0);background:#F2E9D3}
+  100%{background:transparent}
+}
+.receipt-wrap.feeding{animation:feed .5s cubic-bezier(.25,.9,.3,1) both}
+@keyframes feed{
+  0%{opacity:0;transform:translateY(-30px) scaleY(.9);transform-origin:top}
+  100%{opacity:1;transform:translateY(0) scaleY(1)}
+}
+
+/* ---------- 按鈕 ---------- */
+.acts{display:flex;gap:8px;margin:0 0 22px}
+.btn{flex:1;border:.5px solid var(--rule);background:var(--paper);color:var(--ink-2);font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;padding:14px 8px;cursor:pointer}
+.btn:active{background:#EDEAE4}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--paper)}
+.btn.danger{color:var(--red);border-color:#DCC4BF}
+.btn:disabled{opacity:.4}
+.backbar{display:flex;align-items:center;padding:12px 0 10px}
+.backbar button{border:0;background:transparent;font-family:var(--mono);font-size:12.5px;color:var(--ink-2);letter-spacing:.12em;padding:10px 14px 10px 0;cursor:pointer}
+
+/* ---------- 底部新增 ---------- */
+.fab{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 62%,rgba(232,229,224,0))}
+.fab-inner{max-width:420px;margin:0 auto}
+.fab button{width:100%;border:0;background:var(--green);color:var(--paper);font-family:var(--mono);font-size:13px;letter-spacing:.24em;padding:15px;cursor:pointer}
+
+/* ---------- 面板 ---------- */
+.sheet-bg{position:fixed;inset:0;background:rgba(42,39,33,.42);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:420px;background:var(--paper);border-top:.5px solid var(--edge);padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:up .22s ease-out both}
+@keyframes up{from{transform:translateY(18px);opacity:.4}to{transform:translateY(0);opacity:1}}
+.sheet h3{margin:0 0 14px;font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--ink-3);text-align:center;font-weight:400}
+.amt-input{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;font-family:var(--mono);font-size:38px;text-align:center;color:var(--ink);padding:4px 0 10px;font-variant-numeric:tabular-nums}
+.amt-input:focus{outline:none;border-bottom-color:var(--green)}
+.dir{display:flex;margin:14px 0 16px;border:.5px solid var(--rule)}
+.dir button{flex:1;border:0;background:transparent;padding:14px 4px;font-size:13.5px;color:var(--ink-2);cursor:pointer}
+.dir button.on{background:var(--green);color:var(--paper)}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ink-3);margin-bottom:5px}
+.fld input{width:100%;border:.5px solid var(--rule);background:var(--paper-hi);padding:10px 11px;font-family:var(--mono);font-size:14px;color:var(--ink);border-radius:0}
+.fld input:focus{outline:none;border-color:var(--green)}
+.row2{display:flex;gap:10px}
+.row2 .fld{flex:1;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:.5px solid var(--rule);background:var(--paper-hi);color:var(--ink-2);font-size:13px;padding:10px 14px;cursor:pointer;font-family:var(--mono)}
+.chip.on{background:var(--green);border-color:var(--green);color:var(--paper)}
+.repay-note{text-align:center;font-size:12.5px;color:var(--ink-2);margin:14px 0 16px;line-height:1.7}
+.repay-note b{font-family:var(--mono);color:var(--ink);font-weight:400}
+.linkish{border:0;background:transparent;color:var(--green);font-size:12.5px;text-decoration:underline;padding:6px 4px;margin-top:2px;cursor:pointer}
+.err{color:var(--red);font-size:12px;margin-bottom:10px;text-align:center}
+.skiphint{font-size:10.5px;color:var(--ink-3);margin-top:6px}
+.confirm{background:var(--paper-off);border:.5px solid var(--rule);padding:13px;margin-bottom:12px}
+.confirm p{margin:0 0 10px;font-size:12.5px;color:var(--ink);line-height:1.6}
+.toast{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:12.5px;padding:9px 16px;z-index:60;font-family:var(--mono);letter-spacing:.06em}
+.empty{text-align:center;padding:56px 20px;color:var(--ink-3);font-family:var(--mono);font-size:12px;letter-spacing:.14em}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="fab"><div class="fab-inner"><button onclick="openAdd()">記 一 筆</button></div></div>
+
+<script>
+const BANKS=["國泰","台新","富邦","聯邦","星展","現金"];
+const PINNED=["May"];
+
+/* ===== 設定 ===== */
+const DEMO=true;                       // build_preview.py 會把這行改成 true
+const API_URL="";            // Apps Script 網頁應用程式網址
+const API_TOKEN="preview";        // 指令碼屬性裡的 API_TOKEN
+const LS_DATA="hmsz_data", LS_QUEUE="hmsz_queue";
+
+const DEMO_DATA=[
+ {id:"a1",date:"2026-08-03",person:"May",item:"訂房",amount:1800,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
+ {id:"a2",date:"2026-08-07",person:"May",item:"蝦皮代購",amount:420,cur:"TWD",orig:null,pay:"",type:"normal",note:""},
+ {id:"a3",date:"2026-08-11",person:"May",item:"晚餐",amount:-560,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"a4",date:"2026-08-14",person:"May",item:"清邁按摩",amount:230,cur:"THB",orig:250,pay:"台新",type:"normal",note:""},
+ {id:"b1",date:"2026-08-09",person:"Eric",item:"團購咖啡",amount:180,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"c1",date:"2026-08-01",person:"哥",item:"網購耳機",amount:2490,cur:"TWD",orig:null,pay:"富邦",type:"normal",note:""},
+ {id:"d1",date:"2026-08-05",person:"Karen",item:"便當",amount:120,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"d2",date:"2026-08-15",person:"Karen",item:"結清",amount:-120,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
+ {id:"e1",date:"2026-02-10",person:"Ivy",item:"高鐵票",amount:1490,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
+ {id:"e2",date:"2026-02-20",person:"Ivy",item:"結清",amount:-1490,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
+];
+
+let DATA=[], QUEUE=[], syncing=false, booted=false;
+
+function loadCache(){
+  try{DATA=JSON.parse(localStorage.getItem(LS_DATA)||"[]")}catch(e){DATA=[]}
+  try{QUEUE=JSON.parse(localStorage.getItem(LS_QUEUE)||"[]")}catch(e){QUEUE=[]}
+}
+function saveCache(){
+  try{
+    localStorage.setItem(LS_DATA,JSON.stringify(DATA));
+    localStorage.setItem(LS_QUEUE,JSON.stringify(QUEUE));
+  }catch(e){}
+}
+function enqueue(op){
+  if(DEMO)return;
+  op.key="k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  QUEUE.push(op);saveCache();flush();
+}
+function commitUpsert(e){
+  const i=DATA.findIndex(x=>x.id===e.id);
+  if(i>-1)DATA[i]=e;else DATA.push(e);
+  saveCache();enqueue({op:"upsert",entry:e});
+}
+function commitDelete(id){
+  DATA=DATA.filter(x=>x.id!==id);
+  saveCache();enqueue({op:"delete",id:id});
+}
+
+async function flush(){
+  if(DEMO||syncing||!QUEUE.length||!navigator.onLine)return;
+  syncing=true;paintSync();
+  try{
+    const res=await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({token:API_TOKEN,ops:QUEUE})
+    });
+    const j=await res.json();
+    if(j.status==="ok"){
+      const done=new Set(j.done||[]);
+      QUEUE=QUEUE.filter(o=>!done.has(o.key));
+      if(j.entries)DATA=j.entries;
+      saveCache();render();
+      if((j.failed||[]).length)toast("有 "+j.failed.length+" 筆同步失敗");
+    }
+  }catch(e){/* 沒網路就留在佇列，下次再送 */}
+  syncing=false;paintSync();
+}
+
+async function pull(){
+  if(DEMO||!navigator.onLine)return;
+  if(QUEUE.length)return flush();
+  try{
+    const r=await fetch(API_URL+"?action=list&token="+encodeURIComponent(API_TOKEN));
+    const j=await r.json();
+    if(j.status==="ok"){DATA=j.entries||[];saveCache();render()}
+    else toast(j.message||"讀取失敗");
+  }catch(e){/* 離線就用快取 */}
+}
+
+function paintSync(){
+  const el=document.getElementById("syncbadge");
+  if(!el)return;
+  el.textContent=QUEUE.length?(syncing?"同步中…":QUEUE.length+" 筆待同步"):"";
+}
+
+
+let view={s:"home"}, freshId=null, stampFor=null, feeding=false, showOld=false;
+
+const money=n=>Math.round(Math.abs(n)).toLocaleString("en-US");
+const md=d=>d.slice(5).replace("-","/");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const q=s=>String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+
+function people(){
+  const m={};
+  DATA.forEach(e=>{
+    if(!m[e.person])m[e.person]={name:e.person,bal:0,n:0,last:e.date,lastItem:e.item,lastAmt:e.amount};
+    const p=m[e.person];p.bal+=e.amount;p.n++;
+    if(e.date>=p.last){p.last=e.date;p.lastItem=e.item;p.lastAmt=e.amount}
+  });
+  return Object.values(m).sort((a,b)=>{
+    const pa=PINNED.indexOf(a.name),pb=PINNED.indexOf(b.name);
+    if(pa>-1||pb>-1){if(pa===-1)return 1;if(pb===-1)return -1;return pa-pb}
+    if((a.bal===0)!==(b.bal===0))return a.bal===0?1:-1;
+    return b.last.localeCompare(a.last);
+  });
+}
+const entriesOf=n=>DATA.filter(e=>e.person===n).sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
+const byId=id=>DATA.find(e=>e.id===id);
+
+function bars(seed){
+  let h=0;for(const c of seed)h=(h*31+c.charCodeAt(0))>>>0;
+  let s="";for(let i=0;i<26;i++){h=(h*1103515245+12345)>>>0;s+=`<i style="width:${1+(h%3)}px"></i>`}
+  return s;
+}
+function tearPts(){
+  let p="0,0 260,0 260,1";
+  for(let x=252;x>0;x-=8)p+=` ${x},8 ${x-4},1`;
+  return p+" 0,5";
+}
+function tearSvg(cls,fill){
+  return `<svg class="${cls}" viewBox="0 0 260 9" preserveAspectRatio="none" aria-hidden="true"><polygon points="${tearPts()}" fill="${fill}" stroke="var(--edge)" stroke-width=".5"/></svg>`;
+}
+
+/* ================= 畫面 ================= */
+function render(){view.s==="home"?home():detail(view.name);paintSync()}
+
+function home(){
+  const ps=people();
+  const recv=ps.reduce((s,p)=>s+(p.bal>0?p.bal:0),0);
+  const owe=ps.reduce((s,p)=>s+(p.bal<0?-p.bal:0),0);
+  const live=ps.filter(p=>p.bal!==0), done=ps.filter(p=>p.bal===0);
+
+  let h=`<div class="machine">
+    <div class="machine-top"><span class="brand">還 沒 算 帳</span><span class="stat"><span id="syncbadge" class="syncbadge"></span>${live.length} 人未結</span></div>
+    <div class="slot"></div>
+  </div>
+  <div class="machine-foot"></div>
+  <div class="summary-wrap">
+    <div class="summary">
+      <div class="lab">應 收 總 額</div>
+      <div class="val ${recv?"":"zero"}">${recv?money(recv):"0"}</div>
+      ${owe?`<div class="sub">你欠人 <b>${money(owe)}</b></div>`:""}
+    </div>
+    ${tearSvg("tear","var(--paper)")}
+  </div>
+  <div class="wrap">`;
+
+  if(!ps.length){
+    h+=`<div class="empty">還 沒 有 任 何 帳</div></div>`;
+    document.getElementById("app").innerHTML=h;return;
+  }
+
+  live.forEach(p=>h+=stub(p,false));
+  h+=`</div>`;
+
+  if(done.length){
+    const cut=new Date(Date.now()-92*864e5).toISOString().slice(0,10);
+    const recent=done.filter(p=>p.last>=cut), old=done.filter(p=>p.last<cut);
+    h+=`<div class="spike"><div class="spike-rod"><span class="pin"></span><span class="base"></span></div><div class="spike-lab">已 結 清</div></div>
+        <div class="wrap spike-wrap">`;
+    recent.forEach(p=>h+=stub(p,true));
+    if(showOld)old.forEach(p=>h+=stub(p,true));
+    if(old.length)h+=`<button class="btn" style="width:100%;margin-bottom:20px" onclick="toggleOld()">${showOld?"收 起 舊 紀 錄":`看 更 早 的 ${old.length} 筆`}</button>`;
+    h+=`</div>`;
+  }
+  document.getElementById("app").innerHTML=h;
+}
+
+function stub(p,isDone){
+  const cls=p.bal>0?"":(p.bal<0?"owe":"zero");
+  return `<div class="stub-wrap ${isDone?"done":""}" onclick="go('${q(p.name)}')">
+    <div class="stub">
+      <div class="stub-top">
+        <div><div class="stub-name">${esc(p.name)}</div>
+        <div class="stub-meta">${p.n} 筆 · 最後 ${md(p.last)}</div></div>
+        <div class="stub-amt ${cls}">${p.bal===0?"已結清":(p.bal<0?"-":"")+money(p.bal)}</div>
+      </div>
+      <div class="stub-last"><span>${esc(p.lastItem)}</span><span>${p.lastAmt<0?"-":""}${money(p.lastAmt)}</span></div>
+    </div>
+    ${tearSvg("tear-s",isDone?"var(--paper-off)":"var(--paper)")}
+  </div>`;
+}
+
+function detail(name){
+  const es=entriesOf(name);
+  const bal=es.reduce((s,e)=>s+e.amount,0);
+  const cls=bal>0?"":(bal<0?"owe":"zero");
+
+  let lines="";
+  es.forEach(e=>{
+    const cur=e.cur!=="TWD"?` <span class="tag">${esc(e.cur)} ${e.orig}</span>`:"";
+    const pay=e.pay?` <span class="tag">·${esc(e.pay)}</span>`:"";
+    lines+=`<div class="line ${e.type==="settle"?"settle":""} ${e.id===freshId?"fresh":""}" onclick="openEntry('${q(e.id)}')">
+      <span class="l">${md(e.date)}&nbsp; ${esc(e.item)}${cur}${pay}</span>
+      <span class="r ${e.amount<0?"minus":""}">${e.amount<0?"-":""}${money(e.amount)}</span>
+    </div>`;
+  });
+
+  document.getElementById("app").innerHTML=`<div class="wrap">
+    <div class="backbar"><button onclick="go(null)">&lt;&nbsp; 回 帳 本</button></div>
+    <div class="receipt-wrap ${feeding?"feeding":""}">
+      <div class="receipt">
+        <div class="r-kicker">還 沒 算 帳</div>
+        <div class="r-name">${esc(name)}</div>
+        <div class="r-no">${new Date().toLocaleDateString("zh-TW")} · NO.${String(es.length).padStart(4,"0")}</div>
+        <div class="rule"></div>
+        ${lines||'<div class="empty" style="padding:24px 0">尚 無 紀 錄</div>'}
+        <div class="rule" style="margin-bottom:0"></div>
+        <div class="total-line">
+          <span class="total-label">${bal<0?"應 付":"應 收"}</span>
+          <span class="total-val ${cls}">${bal===0?"0":(bal<0?"-":"")+money(bal)}</span>
+        </div>
+        <div class="status">${bal===0?"已 結 清":"未 結 清"}</div>
+        <div class="barcode">${bars(name)}</div>
+        ${bal===0?`<div class="stamp ${stampFor===name?"drop":""}">已結清</div>`:""}
+      </div>
+      ${tearSvg("tear-s","var(--paper)")}
+    </div>
+    <div class="acts">
+      <button class="btn" onclick="copyText('${q(name)}')">複 製 對 帳</button>
+      <button class="btn" onclick="openAdd({person:'${q(name)}',repay:true})" ${bal===0?"disabled":""}>${bal<0?"還 款":"收 款"}</button>
+      <button class="btn primary" onclick="askSettle('${q(name)}')" ${bal===0?"disabled":""}>結 清</button>
+    </div>
+    <div id="settle-zone"></div>
+  </div>`;
+  freshId=null;stampFor=null;feeding=false;
+}
+
+/* ================= 單筆明細 ================= */
+function openEntry(id){
+  const e=byId(id);if(!e)return;
+  const bg=document.createElement("div");
+  bg.className="sheet-bg";bg.id="sheetbg";
+  bg.onclick=ev=>{if(ev.target===bg)closeSheet()};
+  bg.innerHTML=`<div class="sheet">
+    <h3>這 筆 明 細</h3>
+    <div class="fld"><label>金 額</label><input id="e-amt" type="number" inputmode="decimal" value="${Math.abs(e.amount)}"></div>
+    <div class="dir">
+      <button id="ed-lend" class="${e.amount>=0?"on":""}" onclick="setEDir('lend')">我先付</button>
+      <button id="ed-borrow" class="${e.amount<0?"on":""}" onclick="setEDir('borrow')">對方先付</button>
+    </div>
+    <div class="row2">
+      <div class="fld"><label>日 期</label><input id="e-date" type="date" value="${e.date}"></div>
+      <div class="fld"><label>項 目</label><input id="e-item" value="${esc(e.item)}"></div>
+    </div>
+    <div class="fld"><label>付 款 方 式</label>
+      <div class="chips">${BANKS.map(b=>`<button class="chip ${e.pay===b?"on":""}" data-b="${b}" onclick="setEPay('${b}')">${b}</button>`).join("")}</div>
+    </div>
+    <div class="fld"><label>外 幣</label><div class="row2">
+      <input id="e-cur" value="${e.cur==="TWD"?"":esc(e.cur)}" placeholder="THB" style="flex:0 0 90px">
+      <input id="e-orig" type="number" value="${e.orig||""}" placeholder="原幣金額"></div></div>
+    <div class="err" id="e-err" style="display:none"></div>
+    <div class="acts" style="margin-bottom:14px">
+      <button class="btn" onclick="closeSheet()">取 消</button>
+      <button class="btn primary" onclick="saveEntry('${q(id)}')">儲 存</button>
+    </div>
+    <div id="del-zone"><button class="btn danger" style="width:100%" onclick="askDelete('${q(id)}')">刪 除 這 筆</button></div>
+  </div>`;
+  document.body.appendChild(bg);
+  bindKeyboardScroll(bg);
+  eform={dir:e.amount>=0?"lend":"borrow",pay:e.pay||""};
+}
+let eform={dir:"lend",pay:""};
+function setEDir(d){eform.dir=d;
+  document.getElementById("ed-lend").className=d==="lend"?"on":"";
+  document.getElementById("ed-borrow").className=d==="borrow"?"on":"";}
+function setEPay(b){eform.pay=eform.pay===b?"":b;
+  document.querySelectorAll("#sheetbg .chip[data-b]").forEach(c=>c.className="chip"+(c.dataset.b===eform.pay?" on":""));}
+
+function saveEntry(id){
+  const e=byId(id);if(!e)return;
+  const amt=Number(document.getElementById("e-amt").value);
+  const err=document.getElementById("e-err");
+  if(!amt||amt<=0){err.textContent="請輸入金額";err.style.display="block";return}
+  const cur=(document.getElementById("e-cur").value.trim()||"TWD").toUpperCase();
+  e.amount=eform.dir==="lend"?amt:-amt;
+  e.date=document.getElementById("e-date").value;
+  e.item=document.getElementById("e-item").value.trim()||e.item;
+  e.pay=eform.pay;e.cur=cur;
+  e.orig=cur!=="TWD"?(Number(document.getElementById("e-orig").value)||null):null;
+  commitUpsert(e);
+  closeSheet();render();toast("已更新");
+}
+
+function askDelete(id){
+  const e=byId(id);if(!e)return;
+  const willReopen=e.type==="settle";
+  document.getElementById("del-zone").innerHTML=`<div class="confirm">
+    <p>確定刪除「${esc(e.item)} ${e.amount<0?"-":""}${money(e.amount)}」？${willReopen?"<br>刪除後 "+esc(e.person)+" 會回到未結清狀態。":""}</p>
+    <div class="acts" style="margin:0">
+      <button class="btn" onclick="openEntry('${q(id)}')">取 消</button>
+      <button class="btn danger" onclick="doDelete('${q(id)}')">確 定 刪 除</button>
+    </div></div>`;
+}
+function doDelete(id){
+  commitDelete(id);
+  closeSheet();
+  const still=entriesOf(view.name).length;
+  if(view.s==="detail"&&!still)view={s:"home"};
+  render();toast("已刪除");
+}
+function closeSheet(){document.getElementById("sheetbg")?.remove()}
+function bindKeyboardScroll(bg){
+  bg.querySelectorAll("input").forEach(i=>i.addEventListener("focus",()=>{
+    setTimeout(()=>i.scrollIntoView({block:"center",behavior:"smooth"}),260);
+  }));
+}
+
+/* ================= 動作 ================= */
+function go(n){view=n?{s:"detail",name:n}:{s:"home"};render();window.scrollTo(0,0)}
+function toggleOld(event){showOld=!showOld;render()}
+function askSettle(name){
+  const bal=entriesOf(name).reduce((s,e)=>s+e.amount,0);
+  if(!bal)return;
+  document.getElementById("settle-zone").innerHTML=`<div class="confirm" style="margin-bottom:22px">
+    <p>${esc(name)} 目前${bal>0?"欠你":"你欠"} <b>${money(bal)}</b>，確定蓋章結清？</p>
+    <div class="acts" style="margin:0">
+      <button class="btn" onclick="document.getElementById('settle-zone').innerHTML=''">取 消</button>
+      <button class="btn primary" onclick="settle('${q(name)}')">確 定 結 清</button>
+    </div></div>`;
+  document.getElementById("settle-zone").scrollIntoView({behavior:"smooth",block:"end"});
+}
+function settle(name){
+  const bal=entriesOf(name).reduce((s,e)=>s+e.amount,0);
+  if(!bal)return;
+  commitUpsert({id:"s"+Date.now(),date:new Date().toISOString().slice(0,10),person:name,item:"結清",amount:-bal,cur:"TWD",orig:null,pay:"",type:"settle",note:""});
+  stampFor=name;render();toast("已蓋章結清");
+}
+function copyText(name){
+  const es=entriesOf(name);
+  const bal=es.reduce((s,e)=>s+e.amount,0);
+  let t=`【還沒算帳 · ${name}】\n`;
+  es.forEach(e=>{
+    const cur=e.cur!=="TWD"?`(${e.cur} ${e.orig})`:"";
+    t+=`${md(e.date)} ${e.item}${cur} ${e.amount<0?"-":"+"}${money(e.amount)}\n`;
+  });
+  t+="────────\n"+(bal>=0?`你欠我 NT$${money(bal)}`:`我欠你 NT$${money(bal)}`);
+  navigator.clipboard?.writeText(t).then(()=>toast("已複製，可貼到 LINE"),()=>toast("複製失敗"));
+}
+function toast(m){
+  const d=document.createElement("div");d.className="toast";d.textContent=m;
+  document.body.appendChild(d);setTimeout(()=>d.remove(),1900);
+}
+
+/* ================= 新增 ================= */
+let form={dir:"lend",pay:"",repay:false,bal:0};
+function openAdd(opt){
+  opt=opt||{};
+  const pre=opt.person||(view.s==="detail"?view.name:"");
+  const bal=pre?entriesOf(pre).reduce((s,e)=>s+e.amount,0):0;
+  form={dir:"lend",pay:"",repay:!!opt.repay,bal:bal};
+  const names=people().map(p=>p.name);
+  const bg=document.createElement("div");
+  bg.className="sheet-bg";bg.id="sheetbg";
+  bg.onclick=e=>{if(e.target===bg)closeSheet()};
+  bg.innerHTML=`<div class="sheet">
+    <h3>${form.repay?(bal<0?"還 款 給 對 方":"收 到 還 款"):"記 一 筆"}</h3>
+    <input class="amt-input" id="f-amt" type="number" inputmode="decimal" placeholder="0">
+    ${form.repay
+      ? `<div class="repay-note">目前${bal<0?"你欠 "+esc(pre):esc(pre)+" 欠你"} <b>${money(bal)}</b>，這筆會直接扣掉<br><button class="linkish" onclick="fillAll(${Math.abs(bal)})">帶入全額</button></div>`
+      : `<div class="dir">
+      <button id="d-lend" class="on" onclick="setDir('lend')">我先付</button>
+      <button id="d-borrow" onclick="setDir('borrow')">對方先付</button>
+    </div>`}
+    ${form.repay?`<input type="hidden" id="f-person" value="${esc(pre)}">`
+      :`<div class="fld"><label>對 象</label>
+      <div class="chips" style="margin-bottom:8px">${names.slice(0,6).map(n=>`<button class="chip ${n===pre?"on":""}" data-p="${esc(n)}" onclick="pickPerson('${q(n)}')">${esc(n)}</button>`).join("")}</div>
+      <input id="f-person" value="${esc(pre)}" placeholder="或直接輸入新的名字" oninput="syncPerson()"></div>`}
+    <div class="row2">
+      <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fld"><label>項 目</label><input id="f-item" placeholder="${form.repay?"還款":"訂房"}" value="${form.repay?"還款":""}"></div>
+    </div>
+    ${form.repay?'<input type="hidden" id="f-cur" value=""><input type="hidden" id="f-orig" value="">'
+      :`<div class="fld"><label>付 款 方 式（可略）</label>
+      <div class="chips">${BANKS.map(b=>`<button class="chip" data-b="${b}" onclick="setPay('${b}')">${b}</button>`).join("")}</div>
+      <div class="skiphint">不填也可以，只影響對帳時的參考</div></div>
+    <div class="fld"><label>外 幣（可略）</label><div class="row2">
+      <input id="f-cur" placeholder="THB" style="flex:0 0 90px">
+      <input id="f-orig" type="number" inputmode="decimal" placeholder="原幣金額"></div></div>`}
+    <div class="err" id="f-err" style="display:none"></div>
+    <div class="acts" style="margin-bottom:4px">
+      <button class="btn" onclick="closeSheet()">取 消</button>
+      <button class="btn primary" onclick="submitAdd()">${form.repay?"記 下 還 款":"列 印"}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  bindKeyboardScroll(bg);
+  setTimeout(()=>document.getElementById("f-amt").focus(),80);
+}
+function fillAll(v){document.getElementById("f-amt").value=v;}
+function pickPerson(n){
+  const inp=document.getElementById("f-person");
+  inp.value=inp.value===n?"":n;syncPerson();
+}
+function syncPerson(){
+  const v=document.getElementById("f-person").value.trim();
+  document.querySelectorAll("#sheetbg .chip[data-p]").forEach(c=>c.className="chip"+(c.dataset.p===v?" on":""));
+}
+function setDir(d){form.dir=d;
+  document.getElementById("d-lend").className=d==="lend"?"on":"";
+  document.getElementById("d-borrow").className=d==="borrow"?"on":"";}
+function setPay(b){form.pay=form.pay===b?"":b;
+  document.querySelectorAll("#sheetbg .chip[data-b]").forEach(c=>c.className="chip"+(c.dataset.b===form.pay?" on":""));}
+function submitAdd(){
+  const amt=Number(document.getElementById("f-amt").value);
+  const person=document.getElementById("f-person").value.trim();
+  const item=document.getElementById("f-item").value.trim();
+  const date=document.getElementById("f-date").value;
+  const cur=(document.getElementById("f-cur").value.trim()||"TWD").toUpperCase();
+  const orig=Number(document.getElementById("f-orig").value)||null;
+  const err=document.getElementById("f-err");
+  const fail=m=>{err.textContent=m;err.style.display="block"};
+  if(!amt||amt<=0)return fail("請輸入金額");
+  if(!person)return fail("請輸入對象");
+  const id="n"+Date.now();
+  let signed;
+  if(form.repay){
+    const bal=entriesOf(person).reduce((s,e)=>s+e.amount,0);
+    if(amt>Math.abs(bal))return fail("金額超過目前餘額");
+    signed=bal>=0?-amt:amt;
+  }else{
+    signed=form.dir==="lend"?amt:-amt;
+  }
+  commitUpsert({id,date,person,item:item||(form.repay?"還款":(form.dir==="lend"?"代墊":"收款")),
+    amount:signed,cur,orig:cur!=="TWD"?orig:null,pay:form.pay,type:form.repay?"repay":"normal",note:""});
+  freshId=id;closeSheet();
+  view={s:"detail",name:person};feeding=true;
+  render();window.scrollTo(0,0);
+}
+
+/* ===== 啟動 ===== */
+if(DEMO){
+  DATA=DEMO_DATA.slice();
+  render();
+}else{
+  loadCache();
+  render();
+  pull();
+  window.addEventListener("online",flush);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull()});
+}
+</script>
+</body>
+</html>
