@@ -164,14 +164,14 @@ button{font-family:inherit}
 
 /* ---------- 面板 ---------- */
 .sheet-bg{position:fixed;inset:0;background:rgba(42,39,33,.42);z-index:40;display:flex;align-items:flex-end;justify-content:center}
-.sheet-col{display:flex;flex-direction:column;width:100%;max-width:420px;max-height:96dvh;max-height:96vh}
-.sheet{width:100%;background:var(--paper);border-top:.5px solid var(--edge);padding:16px 16px 18px;flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:up .22s ease-out both}
+.sheet-col{display:flex;flex-direction:column;width:100%;max-width:420px;max-height:calc(100dvh - env(safe-area-inset-top) - 22px);max-height:calc(100vh - 44px)}
+.sheet{width:100%;background:var(--paper);border-top:.5px solid var(--edge);padding:12px 15px 12px;flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;animation:up .22s ease-out both;position:relative}
 @keyframes up{from{transform:translateY(18px);opacity:.4}to{transform:translateY(0);opacity:1}}
-.sheet h3{margin:0 0 16px;font-family:var(--mono);font-size:16px;letter-spacing:.28em;color:var(--ink);text-align:center;font-weight:400}
+.sheet h3{margin:0 0 6px;font-family:var(--mono);font-size:16px;letter-spacing:.28em;color:var(--ink);text-align:center;font-weight:400}
 .amt-disp{
   text-align:center;font-family:var(--mono);font-size:40px;color:var(--ink);
   font-variant-numeric:tabular-nums;letter-spacing:.02em;
-  padding:8px 0 12px;border-bottom:1px solid var(--rule);
+  padding:2px 0 8px;border-bottom:1px solid var(--rule);
   white-space:nowrap;overflow:hidden;cursor:pointer;
 }
 .amt-disp.on{border-bottom-color:var(--green);border-bottom-width:2px}
@@ -193,7 +193,14 @@ button{font-family:inherit}
 .pad-bar{display:flex;justify-content:space-between;align-items:center;padding:0 6px 8px}
 .pad-bar span{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:#6E6A61}
 .pad-bar button{border:0;background:transparent;font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--green);padding:4px 6px;cursor:pointer}
-.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:6px}
+.key-go{
+  grid-column:4;grid-row:1 / span 4;
+  background:var(--green);border-color:var(--green);color:var(--paper);
+  font-size:15px;letter-spacing:.24em;writing-mode:vertical-rl;text-orientation:upright;
+  box-shadow:0 1.5px 0 #1E3126;display:flex;align-items:center;justify-content:center
+}
+.key-go:active{background:#25382D}
 .key{
   border:.5px solid var(--rule);background:var(--paper-hi);color:var(--ink);
   font-family:var(--mono);font-size:22px;padding:13px 0;cursor:pointer;
@@ -201,6 +208,14 @@ button{font-family:inherit}
 }
 .key:active{transform:translateY(1.5px);box-shadow:0 0 0 #CFC9BC;background:#EDE9E1}
 .key-del{font-size:19px;color:var(--red)}
+.fxbtn{
+  border:0;background:transparent;color:#7A7568;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;
+  padding:2px 0 2px 10px;cursor:pointer
+}
+.fxbtn.on{color:var(--green)}
+.lblrow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.lblrow label{margin-bottom:0}
 .morebtn{
   width:100%;border:0;background:transparent;color:#5E5A52;
   font-family:var(--mono);font-size:13px;letter-spacing:.2em;padding:12px 0;cursor:pointer
@@ -210,8 +225,8 @@ button{font-family:inherit}
 .dir{display:flex;margin:14px 0 16px;border:.5px solid var(--rule)}
 .dir button{flex:1;border:0;background:transparent;padding:14px 4px;font-size:15px;color:#4A463E;cursor:pointer}
 .dir button.on{background:var(--green);color:var(--paper)}
-.fld{margin-bottom:13px}
-.fld label{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#5E5A52;margin-bottom:6px}
+.fld{margin-bottom:10px}
+.fld label{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#5E5A52;margin-bottom:4px}
 .fld input{width:100%;min-width:0;max-width:100%;border:.5px solid var(--rule);background:var(--paper-hi);padding:10px 11px;font-family:var(--mono);font-size:16px;color:var(--ink);border-radius:0}
 .fld input[type=date]{font-size:14px;padding:10px 6px;text-align:center}
 .row2{align-items:end}
@@ -219,13 +234,15 @@ button{font-family:inherit}
 .row2{display:flex;gap:10px}
 .row2 .fld{flex:1;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+.sheet-x{position:absolute;top:8px;right:8px;width:38px;height:38px;border:0;background:transparent;color:var(--ink-3);font-size:22px;line-height:1;cursor:pointer;z-index:2}
+.chip-add{color:var(--green);border-style:dashed}
 .chip{border:.5px solid var(--rule);background:var(--paper-hi);color:#4A463E;font-size:14.5px;padding:10px 14px;cursor:pointer;font-family:var(--mono)}
 .chip.on{background:var(--green);border-color:var(--green);color:var(--paper)}
 .repay-note{text-align:center;font-size:14px;color:var(--ink-2);margin:14px 0 16px;line-height:1.7}
 .repay-note b{font-family:var(--mono);color:var(--ink);font-weight:400}
 .linkish{border:0;background:transparent;color:var(--green);font-size:14px;text-decoration:underline;padding:6px 4px;margin-top:2px;cursor:pointer}
 .err{color:var(--red);font-size:13.5px;margin-bottom:10px;text-align:center}
-.skiphint{font-size:12.5px;color:#7A7568;margin-top:7px}
+.skiphint{font-size:12px;color:#7A7568;margin-top:5px}
 .confirm{background:var(--paper-off);border:.5px solid var(--rule);padding:13px;margin-bottom:12px}
 .confirm p{margin:0 0 10px;font-size:14px;color:var(--ink);line-height:1.6}
 .toast{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:14px;padding:9px 16px;z-index:60;font-family:var(--mono);letter-spacing:.06em}
@@ -477,6 +494,7 @@ function openEntry(id){
   bg.className="sheet-bg";bg.id="sheetbg";
   bg.onclick=ev=>{if(ev.target===bg)closeSheet()};
   bg.innerHTML=`<div class="sheet-col"><div class="sheet">
+    <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
     <h3>這 筆 明 細</h3>
     <div class="amt-disp on" id="amt-disp" onclick="showPad()"></div>
     <div class="dir" style="margin-top:14px">
@@ -491,16 +509,13 @@ function openEntry(id){
       <div class="chips">${BANKS.map(b=>`<button class="chip ${e.pay===b?"on":""}" data-b="${b}" onclick="setEPay('${b}')">${b}</button>`).join("")}</div>
     </div>
     <div class="fld"><label>外 幣</label><div class="row2">
-      <input id="e-cur" value="${e.cur==="TWD"?"":esc(e.cur)}" placeholder="THB" style="flex:0 0 90px">
+      <input id="e-cur" value="${e.cur==="TWD"?"":esc(e.cur)}" style="flex:0 0 116px">
       <input id="e-orig" type="number" value="${e.orig||""}" placeholder="原幣金額"></div></div>
     <div class="err" id="e-err" style="display:none"></div>
-    <div class="acts" style="margin-bottom:14px">
-      <button class="btn" onclick="closeSheet()">取 消</button>
-      <button class="btn primary" onclick="saveEntry('${q(id)}')">儲 存</button>
-    </div>
     <div id="del-zone"><button class="btn danger" style="width:100%" onclick="askDelete('${q(id)}')">刪 除 這 筆</button></div>
   </div><div class="pad-dock" id="paddock"></div></div>`;
   padRaw=String(Math.abs(e.amount));padOpen=true;
+  padGo="saveEntry('"+q(id)+"')";padLabel="儲存";
   document.body.appendChild(bg);
   bindKeyboardScroll(bg);
   renderDock();paintPad();
@@ -610,19 +625,21 @@ function showPad(){
   padOpen=true;renderDock();
 }
 function hidePad(){padOpen=false;renderDock()}
+let padGo="submitAdd()",padLabel="列印";
 function renderDock(){
   const d=document.getElementById("paddock");if(!d)return;
-  d.innerHTML=padOpen?keypadHTML():"";
+  d.innerHTML=padOpen?keypadHTML(padGo,padLabel):"";
   d.style.display=padOpen?"block":"none";
   const disp=document.getElementById("amt-disp");
   if(disp)disp.className="amt-disp"+(padOpen?" on":"");
 }
-function keypadHTML(){
+function keypadHTML(go,label){
   const keys=["1","2","3","4","5","6","7","8","9","00","0","del"];
   return '<div class="pad-bar"><span>金 額</span><button onclick="hidePad()">收 起</button></div>'
     +'<div class="pad">'+keys.map(k=>
     '<button class="key'+(k==="del"?" key-del":"")+'" onclick="padPress(\''+k+'\')">'
-    +(k==="del"?"&#9003;":k)+'</button>').join("")+'</div>';
+    +(k==="del"?"&#9003;":k)+'</button>').join("")
+    +'<button class="key key-go" onclick="'+go+'">'+label+'</button></div>';
 }
 /* ================= 新增 ================= */
 let form={dir:"lend",pay:"",repay:false,bal:0};
@@ -636,41 +653,76 @@ function openAdd(opt){
   bg.className="sheet-bg";bg.id="sheetbg";
   bg.onclick=e=>{if(e.target===bg)closeSheet()};
   bg.innerHTML=`<div class="sheet-col"><div class="sheet">
+    <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
     <h3>${form.repay?(bal<0?"還 款 給 對 方":"收 到 還 款"):"記 一 筆"}</h3>
     <div class="amt-disp on" id="amt-disp" onclick="showPad()"><span class="ph">0</span><span class="caret"></span></div>
     ${form.repay
-      ? `<div class="repay-note">目前${bal<0?"你欠 "+esc(pre):esc(pre)+" 欠你"} <b>${money(bal)}</b>，這筆會直接扣掉<br><button class="linkish" onclick="fillAll(${Math.abs(bal)})">帶入全額</button></div>`
-      : `<div class="dir" style="margin:14px 0">
+      ? `<div class="repay-note">目前${bal<0?"你欠 "+esc(pre):esc(pre)+" 欠你"} <b>${money(bal)}</b>，這筆會直接扣掉<br><button class="linkish" onclick="fillAll(${Math.abs(bal)})">帶入全額</button></div>
+         <input type="hidden" id="f-person" value="${esc(pre)}">
+         <input type="hidden" id="f-cur" value=""><input type="hidden" id="f-orig" value="">
+         <div class="row2"><div class="fld"><label>項 目</label><input id="f-item" value="還款"></div>
+         <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>`
+      : `<div class="dir" style="margin:10px 0">
       <button id="d-lend" class="on" onclick="setDir('lend')">我先付</button>
       <button id="d-borrow" onclick="setDir('borrow')">對方先付</button>
-    </div>`}
-    ${form.repay?`<input type="hidden" id="f-person" value="${esc(pre)}">`
-      :`<div class="fld"><label>對 象</label>
-      <div class="chips" style="margin-bottom:8px">${names.slice(0,6).map(n=>`<button class="chip ${n===pre?"on":""}" data-p="${esc(n)}" onclick="pickPerson('${q(n)}')">${esc(n)}</button>`).join("")}</div>
-      <input id="f-person" value="${esc(pre)}" placeholder="或直接輸入新的名字" oninput="syncPerson()"></div>`}
+    </div>
+    <div class="fld"><label>對 象</label>
+      <div class="chips">${names.slice(0,6).map(n=>`<button class="chip ${n===pre?"on":""}" data-p="${esc(n)}" onclick="pickPerson('${q(n)}')">${esc(n)}</button>`).join("")}<button class="chip chip-add" id="newp-btn" onclick="toggleNewPerson()">＋</button></div>
+      <div id="newp-wrap" style="display:none;margin-top:7px"><input id="f-person" value="${esc(pre)}" placeholder="輸入新的名字" oninput="syncPerson()"></div>
+    </div>
     <div class="row2">
+      <div class="fld">
+        <div class="lblrow"><label>項 目</label><button class="fxbtn" id="fx-btn" onclick="toggleFx()">＋ 外幣註記</button></div>
+        <input id="f-item">
+      </div>
       <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-      <div class="fld"><label>項 目</label><input id="f-item" placeholder="${form.repay?"還款":"訂房"}" value="${form.repay?"還款":""}"></div>
     </div>
-    ${form.repay?'<input type="hidden" id="f-cur" value=""><input type="hidden" id="f-orig" value="">'
-      :`<div class="fld"><label>付 款 方 式（可略）</label>
+    <div id="fx-wrap" style="display:none">
+      <div class="fld"><div class="row2">
+        <input id="f-cur" style="flex:0 0 116px" oninput="paintFx()">
+        <input id="f-orig" type="number" inputmode="decimal" placeholder="原幣金額" oninput="paintFx()"></div></div>
+    </div>
+    <div class="fld"><label>付 款 方 式（可略）</label>
       <div class="chips">${BANKS.map(b=>`<button class="chip" data-b="${b}" onclick="setPay('${b}')">${b}</button>`).join("")}</div>
-      <div class="skiphint">不填也可以，只影響對帳時的參考</div></div>
-    <div class="fld"><label>外 幣（可略）</label><div class="row2">
-      <input id="f-cur" placeholder="THB" style="flex:0 0 90px">
-      <input id="f-orig" type="number" inputmode="decimal" placeholder="原幣金額"></div></div>`}
+    </div>`}
     <div class="err" id="f-err" style="display:none"></div>
-    <div class="acts" style="margin-bottom:2px">
-      <button class="btn" onclick="closeSheet()">取 消</button>
-      <button class="btn primary" onclick="submitAdd()">${form.repay?"記 下 還 款":"列 印"}</button>
-    </div>
   </div><div class="pad-dock" id="paddock"></div></div>`;
-  padRaw="";padOpen=true;
+  padRaw="";padOpen=true;padGo="submitAdd()";padLabel="記下";
   document.body.appendChild(bg);
   bindKeyboardScroll(bg);
   renderDock();paintPad();
 }
 function fillAll(v){padRaw=String(Math.round(v));paintPad();}
+function toggleNewPerson(){
+  const w=document.getElementById("newp-wrap");
+  const open=w.style.display!=="none";
+  w.style.display=open?"none":"block";
+  document.getElementById("newp-btn").textContent=open?"＋":"－";
+  if(!open){hidePad();setTimeout(()=>document.getElementById("f-person").focus(),60)}
+}
+function toggleFx(){
+  const w=document.getElementById("fx-wrap");
+  const open=w.style.display!=="none";
+  w.style.display=open?"none":"block";
+  if(open){
+    document.getElementById("f-cur").value="";
+    document.getElementById("f-orig").value="";
+  }else{
+    hidePad();
+    setTimeout(()=>document.getElementById("f-cur").focus(),60);
+  }
+  paintFx();
+}
+function paintFx(){
+  const b=document.getElementById("fx-btn");if(!b)return;
+  const w=document.getElementById("fx-wrap");
+  const cur=(document.getElementById("f-cur")||{}).value||"";
+  const orig=(document.getElementById("f-orig")||{}).value||"";
+  if(w.style.display==="none"){b.className="fxbtn";b.textContent="＋ 外幣註記";return}
+  const filled=cur.trim()&&orig;
+  b.className="fxbtn"+(filled?" on":"");
+  b.textContent=filled?(cur.trim().toUpperCase()+" "+Number(orig).toLocaleString("en-US")+" ✕"):"－ 外幣註記";
+}
 function pickPerson(n){
   const inp=document.getElementById("f-person");
   if(inp)inp.value=inp.value===n?"":n;
