@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>還沒算帳</title>
 <meta name="theme-color" content="#39352E">
@@ -26,7 +26,7 @@
   --machine-dark:#1C1A16;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{margin:0;padding:0}
 body{
   background:var(--bg);color:var(--ink);
@@ -154,7 +154,8 @@ button{font-family:inherit}
 .btn.primary{background:var(--green);border-color:var(--green);color:var(--paper)}
 .btn.danger{color:var(--red);border-color:#DCC4BF}
 .btn:disabled{opacity:.4}
-.backbar{display:flex;align-items:center;padding:12px 0 10px}
+.backbar{display:flex;align-items:center;justify-content:space-between;padding:12px 0 10px}
+.backbar .rename-btn{padding:10px 0 10px 14px}
 .backbar button{border:0;background:transparent;font-family:var(--mono);font-size:14px;color:var(--ink-2);letter-spacing:.12em;padding:10px 14px 10px 0;cursor:pointer}
 
 /* ---------- 底部新增 ---------- */
@@ -235,7 +236,7 @@ button{font-family:inherit}
 .fld{margin-bottom:10px}
 .fld label{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#5E5A52;margin-bottom:4px}
 .fld input{width:100%;min-width:0;max-width:100%;height:46px;border:.5px solid var(--rule);background:var(--paper-hi);padding:0 11px;font-family:var(--mono);font-size:16px;color:var(--ink);border-radius:0}
-.fld input[type=date]{font-size:14.5px;padding:0 6px;text-align:center}
+.fld input[type=date]{font-size:16px;padding:0 6px;text-align:center}
 .row2{align-items:end}
 .fld input:focus{outline:none;border-color:var(--green)}
 .row2{display:flex;gap:10px}
@@ -255,6 +256,26 @@ button{font-family:inherit}
 .confirm p{margin:0 0 10px;font-size:14px;color:var(--ink);line-height:1.6}
 .toast{position:fixed;left:50%;bottom:98px;transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:14px;padding:9px 16px;z-index:60;font-family:var(--mono);letter-spacing:.06em}
 .empty{text-align:center;padding:56px 20px;color:var(--ink-3);font-family:var(--mono);font-size:13.5px;letter-spacing:.14em}
+.cyc-lab{text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.28em;color:#6E6A61;margin:4px 0 10px}
+.cyc{background:var(--paper-off);border:.5px solid var(--edge);margin-bottom:7px}
+.cyc-head{width:100%;border:0;background:transparent;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;font-family:var(--mono);text-align:left;color:inherit}
+.cyc-head:active{background:#E6E2DA}
+.cyc-range{font-size:13.5px;color:#4A4740}
+.cyc-n{font-size:12px;color:#7A7568;margin-top:3px}
+.cyc-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.cyc-amt{font-size:15px;color:#6E6A61;font-variant-numeric:tabular-nums}
+.cyc-stamp{border:1.5px solid var(--green);color:var(--green);font-size:11px;letter-spacing:.12em;padding:2px 6px;transform:rotate(-6deg);mix-blend-mode:multiply}
+.cyc-body{border-top:1px dashed var(--rule);padding:2px 14px 6px}
+.cyc-more{margin-bottom:20px}
+.ro-amt{text-align:center;font-family:var(--mono);font-size:34px;color:var(--ink);padding:2px 0 10px;border-bottom:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.ro-amt.minus{color:var(--red)}
+.ro-amt.settle{color:var(--green)}
+.ro{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--rule);font-family:var(--mono);font-size:14.5px;color:var(--ink)}
+.ro span:first-child{color:#5E5A52;letter-spacing:.2em;font-size:13px;flex-shrink:0}
+.ro span:last-child{text-align:right}
+.ro-note{font-size:13.5px;color:#5E5A52;line-height:1.7;margin:14px 0}
+.sheet:last-child{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.rn-hint{font-size:13.5px;color:#5E5A52;line-height:1.7;margin:2px 0 12px}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -274,16 +295,20 @@ const API_TOKEN="ocfqT3OnlZNFr8P3zMFsgo42ZTNV";        // 指令碼屬性裡的 
 const LS_DATA="hmsz_data", LS_QUEUE="hmsz_queue";
 
 const DEMO_DATA=[
- {id:"a1",date:"2026-08-03",person:"May",item:"訂房",amount:1800,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
- {id:"a2",date:"2026-08-07",person:"May",item:"蝦皮代購",amount:420,cur:"TWD",orig:null,pay:"",type:"normal",note:""},
- {id:"a3",date:"2026-08-11",person:"May",item:"晚餐",amount:-560,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
- {id:"a4",date:"2026-08-14",person:"May",item:"清邁按摩",amount:230,cur:"THB",orig:250,pay:"台新",type:"normal",note:""},
- {id:"b1",date:"2026-08-09",person:"Eric",item:"團購咖啡",amount:180,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
- {id:"c1",date:"2026-08-01",person:"哥",item:"網購耳機",amount:2490,cur:"TWD",orig:null,pay:"富邦",type:"normal",note:""},
- {id:"d1",date:"2026-08-05",person:"Karen",item:"便當",amount:120,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
- {id:"d2",date:"2026-08-15",person:"Karen",item:"結清",amount:-120,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
- {id:"e1",date:"2026-02-10",person:"Ivy",item:"高鐵票",amount:1490,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
- {id:"e2",date:"2026-02-20",person:"Ivy",item:"結清",amount:-1490,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
+ {id:"n1001",date:"2026-08-03",person:"May",item:"訂房",amount:1800,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
+ {id:"n1002",date:"2026-08-07",person:"May",item:"蝦皮代購",amount:420,cur:"TWD",orig:null,pay:"",type:"normal",note:""},
+ {id:"n1003",date:"2026-08-11",person:"May",item:"晚餐",amount:-560,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"n1004",date:"2026-08-14",person:"May",item:"清邁按摩",amount:230,cur:"THB",orig:250,pay:"台新",type:"normal",note:""},
+ {id:"s1005",date:"2026-08-20",person:"May",item:"結清",amount:-1890,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
+ {id:"n1006",date:"2026-10-02",person:"May",item:"機票",amount:2000,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
+ {id:"n1007",date:"2026-10-20",person:"May",item:"咖啡豆",amount:400,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"s1008",date:"2026-10-25",person:"May",item:"結清",amount:-2400,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
+ {id:"n1009",date:"2026-11-20",person:"May",item:"訂房",amount:1500,cur:"TWD",orig:null,pay:"國泰",type:"normal",note:""},
+ {id:"n1010",date:"2026-11-24",person:"May",item:"蝦皮代購",amount:190,cur:"TWD",orig:null,pay:"",type:"normal",note:""},
+ {id:"n1011",date:"2026-11-09",person:"Eric",item:"團購咖啡",amount:180,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"n1012",date:"2026-11-01",person:"哥",item:"網購耳機",amount:2490,cur:"TWD",orig:null,pay:"富邦",type:"normal",note:""},
+ {id:"n1013",date:"2026-11-05",person:"Karen",item:"便當",amount:120,cur:"TWD",orig:null,pay:"現金",type:"normal",note:""},
+ {id:"s1014",date:"2026-11-15",person:"Karen",item:"結清",amount:-120,cur:"TWD",orig:null,pay:"",type:"settle",note:""},
 ];
 
 let DATA=[], QUEUE=[], syncing=false, booted=false;
@@ -298,10 +323,15 @@ function saveCache(){
     localStorage.setItem(LS_QUEUE,JSON.stringify(QUEUE));
   }catch(e){}
 }
+function newKey(){return "k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function enqueue(op){
   if(DEMO)return;
-  op.key="k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  op.key=newKey();
   QUEUE.push(op);saveCache();flush();
+}
+function commitMany(entries){
+  if(!DEMO)entries.forEach(e=>QUEUE.push({op:"upsert",entry:e,key:newKey()}));
+  saveCache();if(!DEMO)flush();
 }
 function commitUpsert(e){
   const i=DATA.findIndex(x=>x.id===e.id);
@@ -313,25 +343,40 @@ function commitDelete(id){
   saveCache();enqueue({op:"delete",id:id});
 }
 
+function applyOp(o){
+  if(o.op==="upsert"){
+    const i=DATA.findIndex(x=>x.id===o.entry.id);
+    if(i>-1)DATA[i]=o.entry;else DATA.push(o.entry);
+  }else if(o.op==="delete"){
+    DATA=DATA.filter(x=>x.id!==o.id);
+  }
+}
+
 async function flush(){
   if(DEMO||syncing||!QUEUE.length||!navigator.onLine)return;
   syncing=true;paintSync();
+  const sent=QUEUE.slice();
+  const sentKeys=new Set(sent.map(o=>o.key));
+  let again=false;
   try{
     const res=await fetch(API_URL,{
       method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({token:API_TOKEN,ops:QUEUE})
+      body:JSON.stringify({token:API_TOKEN,ops:sent})
     });
     const j=await res.json();
     if(j.status==="ok"){
       const done=new Set(j.done||[]);
       QUEUE=QUEUE.filter(o=>!done.has(o.key));
-      if(j.entries)DATA=j.entries;
+      // 伺服器的資料不含同步途中新記的那幾筆，要把它們補回去
+      if(j.entries){DATA=j.entries;QUEUE.forEach(applyOp)}
+      again=QUEUE.some(o=>!sentKeys.has(o.key));
       saveCache();render();
       if((j.failed||[]).length)toast("有 "+j.failed.length+" 筆同步失敗");
     }
   }catch(e){/* 沒網路就留在佇列，下次再送 */}
   syncing=false;paintSync();
+  if(again)flush();
 }
 
 async function pull(){
@@ -340,7 +385,7 @@ async function pull(){
   try{
     const r=await fetch(API_URL+"?action=list&token="+encodeURIComponent(API_TOKEN));
     const j=await r.json();
-    if(j.status==="ok"){DATA=j.entries||[];saveCache();render()}
+    if(j.status==="ok"){DATA=j.entries||[];QUEUE.forEach(applyOp);saveCache();render()}
     else toast(j.message||"讀取失敗");
   }catch(e){/* 離線就用快取 */}
 }
@@ -354,6 +399,12 @@ function paintSync(){
 
 let view={s:"home"}, freshId=null, stampFor=null, feeding=false, showOld=false;
 
+const pad2=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+const today=()=>ymd(new Date());
+const tsOf=e=>Number(String(e.id).replace(/\D/g,""))||0;
+const byDate=(a,b)=>a.date.localeCompare(b.date)||tsOf(a)-tsOf(b);
+const mdY=d=>d.slice(0,4)===String(new Date().getFullYear())?d.slice(5).replace("-","/"):d.replace(/-/g,"/");
 const money=n=>Math.round(Math.abs(n)).toLocaleString("en-US");
 const md=d=>d.slice(5).replace("-","/");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
@@ -366,6 +417,10 @@ function people(){
     const p=m[e.person];p.bal+=e.amount;p.n++;
     if(e.date>=p.last){p.last=e.date;p.lastItem=e.item;p.lastAmt=e.amount}
   });
+  Object.values(m).forEach(p=>{
+    const mr=mainReceipt(p.name);
+    p.n=mr.lines.filter(e=>e.type!=="settle").length;
+  });
   return Object.values(m).sort((a,b)=>{
     const pa=PINNED.indexOf(a.name),pb=PINNED.indexOf(b.name);
     if(pa>-1||pb>-1){if(pa===-1)return 1;if(pb===-1)return -1;return pa-pb}
@@ -373,7 +428,33 @@ function people(){
     return b.last.localeCompare(a.last);
   });
 }
-const entriesOf=n=>DATA.filter(e=>e.person===n).sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
+const entriesOf=n=>DATA.filter(e=>e.person===n).sort(byDate);
+
+/* 依建立順序切票：每遇到一筆結清就撕下一張。
+   open＝目前這張（上次結清之後），closed＝已結清的票（新的在前，每張最後一筆是結清）。
+   用建立順序而不是日期切，補登的舊日期紀錄才會進目前這張，而不是混進已結清的票。 */
+function cyclesOf(name){
+  const es=DATA.filter(e=>e.person===name).sort((a,b)=>tsOf(a)-tsOf(b));
+  const closed=[];let cur=[];
+  es.forEach(e=>{cur.push(e);if(e.type==="settle"){closed.push(cur);cur=[]}});
+  closed.forEach(c=>{const st=c.pop();c.sort(byDate);c.push(st)});
+  cur.sort(byDate);
+  return {open:cur,closed:closed.reverse()};
+}
+/* 明細頁主票：有未結清的紀錄就顯示目前這張；剛結清還沒新紀錄，就顯示剛結清那張 */
+function mainReceipt(name){
+  const {open,closed}=cyclesOf(name);
+  if(open.length||!closed.length)return {lines:open,rest:closed,settled:false,no:closed.length+1};
+  return {lines:closed[0],rest:closed.slice(1),settled:true,no:closed.length};
+}
+function isLocked(e){
+  if(e.type==="settle")return true;
+  return cyclesOf(e.person).closed.some(c=>c.includes(e));
+}
+function latestSettle(name){
+  const {closed}=cyclesOf(name);
+  return closed.length?closed[0][closed[0].length-1]:null;
+}
 const byId=id=>DATA.find(e=>e.id===id);
 
 function bars(seed){
@@ -423,7 +504,7 @@ function home(){
   h+=`</div>`;
 
   if(done.length){
-    const cut=new Date(Date.now()-92*864e5).toISOString().slice(0,10);
+    const cut=ymd(new Date(Date.now()-92*864e5));
     const recent=done.filter(p=>p.last>=cut), old=done.filter(p=>p.last<cut);
     h+=`<div class="spike"><div class="spike-rod"><span class="pin"></span><span class="base"></span></div><div class="spike-lab">已 結 清</div></div>
         <div class="wrap spike-wrap">`;
@@ -450,28 +531,58 @@ function stub(p,isDone){
   </div>`;
 }
 
-function detail(name){
-  const es=entriesOf(name);
-  const bal=es.reduce((s,e)=>s+e.amount,0);
-  const cls=bal>0?"":(bal<0?"owe":"zero");
+let openCycles=new Set(), showAllCyc=false;
 
-  let lines="";
-  es.forEach(e=>{
-    const cur=e.cur!=="TWD"?` <span class="tag">${esc(e.cur)} ${e.orig}</span>`:"";
-    const pay=e.pay?` <span class="tag">·${esc(e.pay)}</span>`:"";
-    lines+=`<div class="line ${e.type==="settle"?"settle":""} ${e.id===freshId?"fresh":""}" onclick="openEntry('${q(e.id)}')">
+function lineHTML(e){
+  const cur=e.cur!=="TWD"?` <span class="tag">${esc(e.cur)} ${e.orig}</span>`:"";
+  const pay=e.pay?` <span class="tag">·${esc(e.pay)}</span>`:"";
+  return `<div class="line ${e.type==="settle"?"settle":""} ${e.id===freshId?"fresh":""}" onclick="openEntry('${q(e.id)}')">
       <span class="l">${md(e.date)}&nbsp; ${esc(e.item)}${cur}${pay}</span>
       <span class="r ${e.amount<0?"minus":""}">${e.amount<0?"-":""}${money(e.amount)}</span>
     </div>`;
-  });
+}
+
+function cycleRow(c){
+  const st=c[c.length-1], items=c.slice(0,-1);
+  const ds=items.map(e=>e.date).sort();
+  const range=ds.length
+    ?(ds[0]===ds[ds.length-1]?mdY(ds[0]):mdY(ds[0])+" – "+mdY(ds[ds.length-1]))
+    :mdY(st.date);
+  const amt=-st.amount, isOpen=openCycles.has(st.id);
+  return `<div class="cyc">
+    <button class="cyc-head" onclick="toggleCycle('${q(st.id)}')">
+      <div><div class="cyc-range">${range}</div><div class="cyc-n">${items.length} 筆 · ${isOpen?"收 起":"展 開"}</div></div>
+      <div class="cyc-right"><span class="cyc-amt">${amt<0?"-":""}${money(amt)}</span><span class="cyc-stamp">已結清</span></div>
+    </button>
+    ${isOpen?`<div class="cyc-body">${c.map(lineHTML).join("")}</div>`:""}
+  </div>`;
+}
+
+function detail(name){
+  const all=entriesOf(name);
+  const bal=all.reduce((s,e)=>s+e.amount,0);
+  const cls=bal>0?"":(bal<0?"owe":"zero");
+  const mr=mainReceipt(name);
+  const lines=mr.lines.map(lineHTML).join("");
+
+  let stack="";
+  if(mr.rest.length){
+    const shown=showAllCyc?mr.rest:mr.rest.slice(0,5);
+    stack=`<div class="cyc-lab">已 結 清 的 票 · ${mr.rest.length}</div>`
+      +shown.map(cycleRow).join("")
+      +(mr.rest.length>5?`<button class="btn cyc-more" style="width:100%" onclick="showAllCyc=!showAllCyc;render()">${showAllCyc?"收 起":"看 更 早 的 "+(mr.rest.length-5)+" 張"}</button>`:"");
+  }
 
   document.getElementById("app").innerHTML=`<div class="wrap">
-    <div class="backbar"><button onclick="go(null)">&lt;&nbsp; 回 帳 本</button></div>
+    <div class="backbar">
+      <button onclick="go(null)">&lt;&nbsp; 回 帳 本</button>
+      <button class="rename-btn" onclick="openRename('${q(name)}')">改 名</button>
+    </div>
     <div class="receipt-wrap ${feeding?"feeding":""}">
       <div class="receipt">
         <div class="r-kicker">還 沒 算 帳</div>
         <div class="r-name">${esc(name)}</div>
-        <div class="r-no">${new Date().toLocaleDateString("zh-TW")} · NO.${String(es.length).padStart(4,"0")}</div>
+        <div class="r-no">${new Date().toLocaleDateString("zh-TW")} · NO.${String(mr.no).padStart(4,"0")}</div>
         <div class="rule"></div>
         ${lines||'<div class="empty" style="padding:24px 0">尚 無 紀 錄</div>'}
         <div class="rule" style="margin-bottom:0"></div>
@@ -491,13 +602,20 @@ function detail(name){
       <button class="btn primary" onclick="askSettle('${q(name)}')" ${bal===0?"disabled":""}>結 清</button>
     </div>
     <div id="settle-zone"></div>
+    ${stack}
   </div>`;
   freshId=null;stampFor=null;feeding=false;
+}
+function toggleCycle(id){
+  if(openCycles.has(id))openCycles.delete(id);else openCycles.add(id);
+  render();
 }
 
 /* ================= 單筆明細 ================= */
 function openEntry(id){
   const e=byId(id);if(!e)return;
+  closeSheet();
+  if(isLocked(e))return openLocked(e);
   const bg=document.createElement("div");
   bg.className="sheet-bg";bg.id="sheetbg";
   bg.innerHTML=`<div class="sheet-col"><div class="sheet">
@@ -528,6 +646,30 @@ function openEntry(id){
   renderDock();paintPad();
   eform={dir:e.amount>=0?"lend":"borrow",pay:e.pay||""};
 }
+function openLocked(e){
+  const ls=latestSettle(e.person);
+  const isSettle=e.type==="settle";
+  const canDel=isSettle&&ls&&ls.id===e.id;
+  const note=isSettle
+    ?(canDel?"結清紀錄不能修改。刪除後這張票會重新打開，回到未結清。":"只能從最近一次結清開始刪除。")
+    :"這張票已經結清，不能修改。要改的話，先刪除最近一次結清，票會重新打開。";
+  const bg=document.createElement("div");
+  bg.className="sheet-bg";bg.id="sheetbg";
+  bg.innerHTML=`<div class="sheet-col"><div class="sheet">
+    <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
+    <h3>${isSettle?"結 清 紀 錄":"這 筆 明 細"}</h3>
+    <div class="ro-amt ${isSettle?"settle":(e.amount<0?"minus":"")}">${e.amount<0?"-":""}${money(e.amount)}</div>
+    <div class="ro"><span>日 期</span><span>${e.date.replace(/-/g,"/")}</span></div>
+    <div class="ro"><span>項 目</span><span>${esc(e.item)}</span></div>
+    ${e.type==="normal"?`<div class="ro"><span>方 向</span><span>${e.amount>=0?"我先付":"對方先付"}</span></div>`:""}
+    ${e.pay?`<div class="ro"><span>付 款</span><span>${esc(e.pay)}</span></div>`:""}
+    ${e.cur&&e.cur!=="TWD"?`<div class="ro"><span>外 幣</span><span>${esc(e.cur)} ${e.orig??""}</span></div>`:""}
+    <div class="ro-note">${note}</div>
+    ${canDel?`<div id="del-zone"><button class="btn danger" style="width:100%" onclick="askDelete('${q(e.id)}')">刪 除 這 次 結 清</button></div>`:""}
+  </div></div>`;
+  document.body.appendChild(bg);
+  bindKeyboardScroll(bg);
+}
 let eform={dir:"lend",pay:""};
 function setEDir(d){eform.dir=d;
   document.getElementById("ed-lend").className=d==="lend"?"on":"";
@@ -554,7 +696,7 @@ function askDelete(id){
   const e=byId(id);if(!e)return;
   const willReopen=e.type==="settle";
   document.getElementById("del-zone").innerHTML=`<div class="confirm">
-    <p>確定刪除「${esc(e.item)} ${e.amount<0?"-":""}${money(e.amount)}」？${willReopen?"<br>刪除後 "+esc(e.person)+" 會回到未結清狀態。":""}</p>
+    <p>確定刪除「${esc(e.item)} ${e.amount<0?"-":""}${money(e.amount)}」？${willReopen?"<br>刪除後這張票會重新打開，"+esc(e.person)+" 回到未結清。":""}</p>
     <div class="acts" style="margin:0">
       <button class="btn" onclick="openEntry('${q(id)}')">取 消</button>
       <button class="btn danger" onclick="doDelete('${q(id)}')">確 定 刪 除</button>
@@ -568,6 +710,46 @@ function doDelete(id){
   render();toast("已刪除");
 }
 function closeSheet(){document.getElementById("sheetbg")?.remove()}
+
+let renameMerge=false;
+function openRename(name){
+  closeSheet();renameMerge=false;
+  const n=DATA.filter(e=>e.person===name).length;
+  const bg=document.createElement("div");
+  bg.className="sheet-bg";bg.id="sheetbg";
+  bg.innerHTML=`<div class="sheet-col"><div class="sheet">
+    <button class="sheet-x" onclick="closeSheet()" aria-label="關閉">&times;</button>
+    <h3>改 名</h3>
+    <div class="fld"><label>新 名 字</label><input id="rn-input" value="${esc(name)}" oninput="renameMerge=false;document.getElementById('rn-go').textContent='確 定 改 名'"></div>
+    <div class="rn-hint">會一次改掉 ${esc(name)} 的全部 ${n} 筆紀錄。</div>
+    <div class="err" id="rn-err" style="display:none"></div>
+    <div class="acts" style="margin-bottom:4px">
+      <button class="btn" onclick="closeSheet()">取 消</button>
+      <button class="btn primary" id="rn-go" onclick="doRename('${q(name)}')">確 定 改 名</button>
+    </div>
+  </div></div>`;
+  document.body.appendChild(bg);
+  bindKeyboardScroll(bg);
+}
+function doRename(old){
+  const nv=document.getElementById("rn-input").value.trim();
+  const err=document.getElementById("rn-err");
+  if(!nv){err.textContent="請輸入名字";err.style.display="block";return}
+  if(nv===old){closeSheet();return}
+  if(DATA.some(e=>e.person===nv)&&!renameMerge){
+    renameMerge=true;
+    err.textContent="已經有「"+nv+"」，再按一次會合併成同一個人。";
+    err.style.display="block";
+    document.getElementById("rn-go").textContent="確 定 合 併";
+    return;
+  }
+  const changed=DATA.filter(e=>e.person===old);
+  changed.forEach(e=>{e.person=nv});
+  commitMany(changed);
+  closeSheet();
+  view={s:"detail",name:nv};
+  render();toast("已改名");
+}
 function bindKeyboardScroll(bg){
   // 版面必須固定：點文字欄位時不動自製鍵盤、也不捲動，
   // 否則重排會讓點擊落到背景遮罩上，整張面板會被誤判關閉。
@@ -580,7 +762,7 @@ function bindKeyboardScroll(bg){
 }
 
 /* ================= 動作 ================= */
-function go(n){view=n?{s:"detail",name:n}:{s:"home"};render();window.scrollTo(0,0)}
+function go(n){view=n?{s:"detail",name:n}:{s:"home"};openCycles=new Set();showAllCyc=false;render();window.scrollTo(0,0)}
 function toggleOld(event){showOld=!showOld;render()}
 function askSettle(name){
   const bal=entriesOf(name).reduce((s,e)=>s+e.amount,0);
@@ -596,18 +778,18 @@ function askSettle(name){
 function settle(name){
   const bal=entriesOf(name).reduce((s,e)=>s+e.amount,0);
   if(!bal)return;
-  commitUpsert({id:"s"+Date.now(),date:new Date().toISOString().slice(0,10),person:name,item:"結清",amount:-bal,cur:"TWD",orig:null,pay:"",type:"settle",note:""});
+  commitUpsert({id:"s"+Date.now(),date:today(),person:name,item:"結清",amount:-bal,cur:"TWD",orig:null,pay:"",type:"settle",note:""});
   stampFor=name;render();toast("已蓋章結清");
 }
 function copyText(name){
-  const es=entriesOf(name);
-  const bal=es.reduce((s,e)=>s+e.amount,0);
+  const mr=mainReceipt(name);
+  const bal=entriesOf(name).reduce((s,e)=>s+e.amount,0);
   let t=`【還沒算帳 · ${name}】\n`;
-  es.forEach(e=>{
+  mr.lines.forEach(e=>{
     const cur=e.cur!=="TWD"?`(${e.cur} ${e.orig})`:"";
     t+=`${md(e.date)} ${e.item}${cur} ${e.amount<0?"-":"+"}${money(e.amount)}\n`;
   });
-  t+="────────\n"+(bal>=0?`你欠我 NT$${money(bal)}`:`我欠你 NT$${money(bal)}`);
+  t+="────────\n"+(bal===0?"已結清":bal>0?`你欠我 NT$${money(bal)}`:`我欠你 NT$${money(bal)}`);
   navigator.clipboard?.writeText(t).then(()=>toast("已複製，可貼到 LINE"),()=>toast("複製失敗"));
 }
 function toast(m){
@@ -659,6 +841,7 @@ function keypadHTML(go,label){
 let form={dir:"lend",pay:"",repay:false,bal:0};
 function openAdd(opt){
   opt=opt||{};
+  closeSheet();
   const pre=opt.person||(view.s==="detail"?view.name:"");
   const bal=pre?entriesOf(pre).reduce((s,e)=>s+e.amount,0):0;
   form={dir:"lend",pay:"",repay:!!opt.repay,bal:bal};
@@ -674,7 +857,7 @@ function openAdd(opt){
          <input type="hidden" id="f-person" value="${esc(pre)}">
          <input type="hidden" id="f-cur" value=""><input type="hidden" id="f-orig" value="">
          <div class="row2"><div class="fld"><label>項 目</label><input id="f-item" value="還款"></div>
-         <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>`
+         <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${today()}"></div></div>`
       : `<div class="dir" style="margin:10px 0">
       <button id="d-lend" class="on" onclick="setDir('lend')">我先付</button>
       <button id="d-borrow" onclick="setDir('borrow')">對方先付</button>
@@ -688,7 +871,7 @@ function openAdd(opt){
         <div class="lblrow"><label>項 目</label><button class="fxbtn" id="fx-btn" onclick="toggleFx()">＋ 外幣註記</button></div>
         <input id="f-item">
       </div>
-      <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fld"><label>日 期</label><input id="f-date" type="date" value="${today()}"></div>
     </div>
     <div id="fx-wrap" style="display:none">
       <div class="fld"><div class="row2">
@@ -760,22 +943,25 @@ function submitAdd(){
   if(!amt||amt<=0)return fail("請輸入金額");
   if(!person)return fail("請輸入對象");
   const id="n"+Date.now();
-  let signed;
+  let signed, type="normal";
   if(form.repay){
     const bal=entriesOf(person).reduce((s,e)=>s+e.amount,0);
     if(amt>Math.abs(bal))return fail("金額超過目前餘額");
     signed=bal>=0?-amt:amt;
+    type=(amt===Math.abs(bal))?"settle":"repay";
   }else{
     signed=form.dir==="lend"?amt:-amt;
   }
   commitUpsert({id,date,person,item:item||(form.repay?"還款":(form.dir==="lend"?"代墊":"收款")),
-    amount:signed,cur,orig:cur!=="TWD"?orig:null,pay:form.pay,type:form.repay?"repay":"normal",note:""});
+    amount:signed,cur,orig:cur!=="TWD"?orig:null,pay:form.pay,type,note:""});
+  if(type==="settle")stampFor=person;
   freshId=id;closeSheet();
   view={s:"detail",name:person};feeding=true;
   render();window.scrollTo(0,0);
 }
 
 /* ===== 啟動 ===== */
+document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
 if(DEMO){
   DATA=DEMO_DATA.slice();
   render();
